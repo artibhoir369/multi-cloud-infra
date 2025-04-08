@@ -1,33 +1,43 @@
-deploy:
-  runs-on: ubuntu-latest
-  needs: build_and_test
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+name: CI/CD Pipeline
 
-    - name: Set AWS credentials
-      run: |
-        echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-        echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-        echo "AWS_DEFAULT_REGION=${{ secrets.AWS_DEFAULT_REGION }}" >> $GITHUB_ENV
+on:
+  push:
+    branches:
+      - main
 
-    - name: Change directory to infra/aws
-      run: cd infra/aws
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Terraform Init and Apply
-      run: |
-        terraform init
-        terraform apply -auto-approve
+      - name: Set AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          echo "AWS credentials set."
 
-    - name: Get AWS Public IP
-      id: get_public_ip
-      run: |
-        echo "::set-output name=public_ip::$(terraform output -raw public_ip)"
+      - name: Terraform Init and Apply
+        working-directory: infra/aws
+        run: |
+          terraform init
+          terraform apply -auto-approve
 
-    - name: Update Ansible Inventory with Public IP
-      run: |
-        sed -i "s/{{ PUBLIC_IP }}/${{ steps.get_public_ip.outputs.public_ip }}/" ansible/inventory.ini
+      - name: Get AWS Public IP
+        id: get_public_ip
+        run: |
+          # Fetch the public IP from Terraform output and store it in an environment variable
+          public_ip=$(terraform output -raw public_ip)
+          echo "PUBLIC_IP=$public_ip" >> $GITHUB_ENV
 
-    - name: Run Ansible Playbook
-      run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
+      - name: Update Ansible Inventory with Public IP
+        run: |
+          # Replace the placeholder with the actual public IP in the Ansible inventory file
+          sed -i "s/{{ PUBLIC_IP }}/${{ env.PUBLIC_IP }}/" ansible/inventory.ini
+
+      - name: Run Ansible Playbook
+        run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
 
