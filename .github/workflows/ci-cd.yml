@@ -23,43 +23,56 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: '1.3.0'  # Specify the version of Terraform you want to use
+          terraform_version: '1.3.0'
 
       - name: Terraform Init
         working-directory: infra/aws
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          terraform init
+          terraform init  # Initialize Terraform and backend
 
       - name: Terraform Refresh
         working-directory: infra/aws
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
-          terraform refresh  # Refresh the Terraform state
+          terraform refresh  # Refresh the state
 
       - name: Terraform Destroy (AWS)
         working-directory: infra/aws
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           terraform destroy -auto-approve  # Destroy any existing infrastructure
 
       - name: Terraform Apply (AWS)
         working-directory: infra/aws
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
         run: |
           terraform apply -auto-approve  # Apply new infrastructure changes
 
       - name: Get AWS Public IP
         id: get_public_ip
         run: |
-          # Fetch the AWS public IP from Terraform output and store it in an environment variable
           public_ip=$(terraform output -raw public_ip)
           if [ -z "$public_ip" ]; then
             echo "Error: Public IP not found."
             exit 1
           fi
-          # Use the GitHub Actions environment files to persist the public IP
           echo "PUBLIC_IP=$public_ip" >> $GITHUB_ENV
 
       - name: Update Ansible Inventory with Public IP
         run: |
-          # Replace the placeholder with the actual public IP in the Ansible inventory file
           sed -i "s/{{ PUBLIC_IP }}/${{ env.PUBLIC_IP }}/" ansible/inventory.ini
 
       - name: Run Ansible Playbook
