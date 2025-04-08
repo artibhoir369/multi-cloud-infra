@@ -71,6 +71,7 @@ jobs:
           fi
           echo "PUBLIC_IP=$public_ip" >> $GITHUB_ENV
         shell: bash
+        working-directory: infra/aws
 
 
       - name: Update Ansible Inventory with Public IP
