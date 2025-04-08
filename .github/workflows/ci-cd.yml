@@ -20,7 +20,12 @@ jobs:
         run: |
           echo "AWS credentials set."
 
-      - name: Terraform Init and Apply
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: '1.3.0'  # Specify the version of Terraform you want to use
+
+      - name: Terraform Init and Apply (AWS)
         working-directory: infra/aws
         run: |
           terraform init
@@ -29,7 +34,7 @@ jobs:
       - name: Get AWS Public IP
         id: get_public_ip
         run: |
-          # Fetch the public IP from Terraform output and store it in an environment variable
+          # Fetch the AWS public IP from Terraform output and store it in an environment variable
           public_ip=$(terraform output -raw public_ip)
           echo "PUBLIC_IP=$public_ip" >> $GITHUB_ENV
 
@@ -40,4 +45,4 @@ jobs:
 
       - name: Run Ansible Playbook
         run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
-
+        
