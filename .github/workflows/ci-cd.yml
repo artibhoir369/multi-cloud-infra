@@ -59,15 +59,19 @@ jobs:
         run: |
           terraform apply -auto-approve  # Apply new infrastructure changes
 
+
       - name: Get AWS Public IP
         id: get_public_ip
         run: |
           public_ip=$(terraform output -raw public_ip)
+          echo "Retrieved Public IP: $public_ip"
           if [ -z "$public_ip" ]; then
             echo "Error: Public IP not found."
             exit 1
           fi
           echo "PUBLIC_IP=$public_ip" >> $GITHUB_ENV
+        shell: bash
+
 
       - name: Update Ansible Inventory with Public IP
         run: |
