@@ -1,0 +1,20 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# Terraform provider binaries
+.terraform/providers/
+
+# Ansible
+*.retry
+
+# Environment-specific files (example for SSH keys, etc.)
+*.pem
+*.key
+
+# Logs and temporary files
+*.log
+

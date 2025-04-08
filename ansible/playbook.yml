@@ -1,0 +1,32 @@
+---
+- name: Set up Web Servers
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Clone the web app from GitHub
+      git:
+        repo: 'https://github.com/your-repo/hello-paper-social.git'
+        dest: /opt/webapp
+
+    - name: Run the app with Docker
+      docker_container:
+        name: webapp
+        image: node:14
+        state: started
+        restart_policy: always
+        volumes:
+          - /opt/webapp:/usr/src/app
+        command: "npm install && npm start"
+
