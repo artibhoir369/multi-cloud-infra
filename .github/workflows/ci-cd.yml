@@ -44,6 +44,7 @@ jobs:
             echo "Error: Public IP not found."
             exit 1
           fi
+          # Use the GitHub Actions environment files to persist the public IP
           echo "PUBLIC_IP=$public_ip" >> $GITHUB_ENV
 
       - name: Update Ansible Inventory with Public IP
