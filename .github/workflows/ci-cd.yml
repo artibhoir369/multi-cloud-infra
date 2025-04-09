@@ -63,7 +63,7 @@ jobs:
       - name: Get AWS Public IP
         id: get_public_ip
         run: |
-          public_ip=$(terraform output -raw public_ip | tr -d '\r\n')
+          public_ip=$(terraform output -raw public_ip | tr -d '\r\n'| sed -E 's/.*stdout: ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           echo "Retrieved Public IP: $public_ip"
           if [ -z "$public_ip" ]; then
             echo "Error: Public IP not found."
