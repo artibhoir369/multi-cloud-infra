@@ -68,19 +68,15 @@ jobs:
         run: |
           sed -i "s/{{ PUBLIC_IP }}/${{ env.PUBLIC_IP }}/g" ansible/inventory.ini
 
-      - name: Debug private key
-        run: |
-          echo "Private key is being passed correctly."
-          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          ls -l ~/.ssh  # List the files to verify the permissions
-
 
       - name: Set up SSH private key for Ansible
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ env.PUBLIC_IP }} >> ~/.ssh/known_hosts  # Add EC2 host to known hosts
+          mkdir -p /home/runner/.ssh
+          ls -l /home/runner
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > /home/runner/.ssh/id_rsa
+          ls -l /home/runner/.ssh
+          chmod 600 /home/runner/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.PUBLIC_IP }} >> /home/runner/.ssh/known_hosts  # Add EC2 host to known hosts
 
       - name: Run Ansible Playbook
         run: |
