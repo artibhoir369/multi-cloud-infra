@@ -49,17 +49,15 @@
       command: whoami
       register: current_user
       become: yes  # Ensure it's run as root
-  
+
     - name: Show current user
       debug:
         var: current_user.stdout
 
-
     - name: Build Docker image for the Node.js app
       docker_image:
         build:
-          path: /opt/webapp  # Corrected path to the directory containing the Dockerfile
-          dockerfile: /opt/webapp/Dockerfile  # Explicitly specify the Dockerfile path (optional)
+          path: /opt/webapp  # Path to the directory containing Dockerfile
         name: sample-node-app
         tag: latest
         state: present  # Ensure the image is built
