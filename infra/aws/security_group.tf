@@ -1,10 +1,10 @@
 resource "aws_security_group" "aws-linux-sg" {
   name        = "linux_sg"
-  description = "Allow HTTP and SSH"
+  description = "Allow 3000 and SSH"
   
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 3000
+    to_port     = 3000
     protocol    = "tcp"
     cidr_blocks = ["45.115.184.224/32"]
   }
