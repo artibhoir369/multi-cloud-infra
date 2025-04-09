@@ -25,4 +25,3 @@ resource "aws_security_group" "aws-linux-sg" {
 
 }
 
-
