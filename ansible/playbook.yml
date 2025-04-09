@@ -37,6 +37,14 @@
         dest: /opt/webapp
       become: yes  # Ensure correct permissions
 
+    - name: List contents of /opt/webapp
+      command: ls -l /opt/webapp
+      register: webapp_files
+
+    - name: Show contents of /opt/webapp
+      debug:
+        var: webapp_files.stdout
+
     - name: Check the current user
       command: whoami
       register: current_user
