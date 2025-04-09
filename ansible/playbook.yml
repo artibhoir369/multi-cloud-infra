@@ -23,6 +23,14 @@
         append: yes
       become: yes  # Ensure it's run as a superuser
 
+    - name: Set permissions on Docker socket
+      file:
+        path: /var/run/docker.sock
+        mode: '0666'
+        owner: root
+        group: docker
+      become: yes
+
     - name: Clone the Node.js web app from GitHub
       git:
         repo: 'https://github.com/artibhoir369/sample-node-app.git'
