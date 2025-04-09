@@ -35,7 +35,8 @@
       git:
         repo: 'https://github.com/artibhoir369/sample-node-app.git'
         dest: /opt/webapp
-      become: yes  # Ensure correct permissions
+        force: yes
+      ignore_errors: yes  # Ensure correct permissions
 
     - name: Install npm
       apt:
