@@ -41,8 +41,10 @@
       docker_image:
         build:
           path: /opt/webapp  # Corrected path to the directory containing the Dockerfile
+          dockerfile: /opt/webapp/Dockerfile  # Explicitly specify the Dockerfile path (optional)
         name: sample-node-app
         tag: latest
+        state: present  # Ensure the image is built
 
     - name: Run the Node.js app in a Docker container
       docker_container:
