@@ -80,6 +80,7 @@ jobs:
 
       - name: Set up SSH private key for Ansible
         run: |
+          mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ env.PUBLIC_IP }} >> ~/.ssh/known_hosts  # Add EC2 host to known hosts
