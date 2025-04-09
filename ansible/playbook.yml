@@ -23,10 +23,6 @@
         append: yes
       become: yes  # Ensure it's run as a superuser
 
-    - name: Ensure group membership is updated (newgrp docker)
-      command: newgrp docker
-      become: yes  # Run this as root to ensure the new group is applied
-
     - name: Clone the Node.js web app from GitHub
       git:
         repo: 'https://github.com/artibhoir369/sample-node-app.git'
