@@ -16,18 +16,36 @@
         state: started
         enabled: yes
 
-    - name: Clone the web app from GitHub
+
+   - name: Clone the Node.js web app from GitHub
       git:
-        repo: 'https://github.com/your-repo/hello-paper-social.git'
+        repo: 'https://github.com/artibhoir369/sample-node-app.git'  # Replace with your actual repo URL
         dest: /opt/webapp
 
-    - name: Run the app with Docker
+    - name: Create Dockerfile for the Node.js app
+      copy:
+        content: |
+          FROM node:14
+          WORKDIR /usr/src/app
+          COPY package*.json ./
+          RUN npm install
+          COPY . .
+          EXPOSE 3000
+          CMD [ "npm", "start" ]
+        dest: /opt/webapp/Dockerfile
+
+    - name: Build Docker image for the Node.js app
+      docker_image:
+        build:
+          path: /opt/webapp
+        name: sample-node-app
+        tag: latest
+
+    - name: Run the Node.js app in a Docker container
       docker_container:
-        name: webapp
-        image: node:14
+        name: node-webapp
+        image: sample-node-app:latest
         state: started
         restart_policy: always
-        volumes:
-          - /opt/webapp:/usr/src/app
-        command: "npm install && npm start"
-
+        ports:
+          - "3000:3000"  # Exposing port 3000 for the Node.js app
