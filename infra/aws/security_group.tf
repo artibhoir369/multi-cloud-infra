@@ -13,7 +13,7 @@ resource "aws_security_group" "aws-linux-sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["45.115.184.224/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
  
   egress {
