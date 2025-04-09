@@ -41,15 +41,6 @@ jobs:
         run: |
           terraform init  # Initialize Terraform and backend
 
-      - name: Terraform Destroy (AWS)
-        working-directory: infra/aws
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-        run: |
-          terraform destroy -auto-approve  # Destroy any existing infrastructure
-
       - name: Terraform Apply (AWS)
         working-directory: infra/aws
         env:
@@ -76,6 +67,12 @@ jobs:
       - name: Update Ansible Inventory with Public IP
         run: |
           sed -i "s/{{ PUBLIC_IP }}/${{ env.PUBLIC_IP }}/g" ansible/inventory.ini
+
+      - name: Debug private key
+        run: |
+          echo "Private key is being passed correctly."
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ls -l ~/.ssh  # List the files to verify the permissions
 
 
       - name: Set up SSH private key for Ansible
