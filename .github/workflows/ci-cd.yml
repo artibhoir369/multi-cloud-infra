@@ -79,5 +79,5 @@ jobs:
           sed -i "s/{{ PUBLIC_IP }}/${{ env.PUBLIC_IP }}/g" ansible/inventory.ini
 
       - name: Run Ansible Playbook
-        run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml --limit aws
+        run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
 
