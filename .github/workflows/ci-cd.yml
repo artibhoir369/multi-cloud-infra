@@ -76,7 +76,7 @@ jobs:
 
       - name: Update Ansible Inventory with Public IP
         run: |
-          sed -i "s/{{ PUBLIC_IP }}/${{ env.PUBLIC_IP }}/" ansible/inventory.ini
+          sed -i "s/{{ PUBLIC_IP }}/${{ env.PUBLIC_IP }}/g" ansible/inventory.ini
 
       - name: Run Ansible Playbook
         run: ansible-playbook -i ansible/inventory.ini ansible/playbook.yml
