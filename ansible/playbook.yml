@@ -16,8 +16,7 @@
         state: started
         enabled: yes
 
-
-   - name: Clone the Node.js web app from GitHub
+    - name: Clone the Node.js web app from GitHub
       git:
         repo: 'https://github.com/artibhoir369/sample-node-app.git'  # Replace with your actual repo URL
         dest: /opt/webapp
@@ -49,3 +48,4 @@
         restart_policy: always
         ports:
           - "3000:3000"  # Exposing port 3000 for the Node.js app
+
