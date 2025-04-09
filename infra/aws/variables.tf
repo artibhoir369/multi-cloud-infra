@@ -22,4 +22,3 @@ variable "key_name" {
   default     = "onelab"
 
 }
-
