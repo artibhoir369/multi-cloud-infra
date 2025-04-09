@@ -37,22 +37,17 @@
         dest: /opt/webapp
       become: yes  # Ensure correct permissions
 
-    - name: List contents of /opt/webapp
-      command: ls -l /opt/webapp
-      register: webapp_files
+    - name: Install npm
+      apt:
+        name: npm
+        state: present
+        update_cache: yes
 
-    - name: Show contents of /opt/webapp
-      debug:
-        var: webapp_files.stdout
-
-    - name: Check the current user
-      command: whoami
-      register: current_user
-      become: yes  # Ensure it's run as root
-
-    - name: Show current user
-      debug:
-        var: current_user.stdout
+    - name: Install prom-client using npm
+      npm:
+        name: prom-client
+        path: /opt/webapp  # Specify the directory where your package.json is located
+        state: present
 
     - name: Build Docker image for the Node.js app
       docker_image:

@@ -68,6 +68,12 @@ jobs:
         run: |
           sed -i "s/{{ PUBLIC_IP }}/${{ env.PUBLIC_IP }}/g" ansible/inventory.ini
 
+      # Wait for 10 seconds
+      - name: Wait for 10 seconds to get server ready
+        run: |
+          echo "Waiting for 5 seconds..."
+          sleep 10
+
 
       - name: Set up SSH private key for Ansible
         run: |
