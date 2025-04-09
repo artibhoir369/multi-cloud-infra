@@ -21,22 +21,10 @@
         repo: 'https://github.com/artibhoir369/sample-node-app.git'  # Replace with your actual repo URL
         dest: /opt/webapp
 
-    - name: Create Dockerfile for the Node.js app
-      copy:
-        content: |
-          FROM node:14
-          WORKDIR /usr/src/app
-          COPY package*.json ./
-          RUN npm install
-          COPY . .
-          EXPOSE 3000
-          CMD [ "npm", "start" ]
-        dest: /opt/webapp/Dockerfile
-
     - name: Build Docker image for the Node.js app
       docker_image:
         build:
-          path: /opt/webapp
+          path: /opt/webapp/sample-node-app  # Corrected path to the directory containing the Dockerfile
         name: sample-node-app
         tag: latest
 
@@ -47,5 +35,4 @@
         state: started
         restart_policy: always
         ports:
-          - "3000:3000"  # Exposing port 3000 for the Node.js app
-
+          - "3000:3000
