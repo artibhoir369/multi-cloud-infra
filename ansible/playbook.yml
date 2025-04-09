@@ -60,6 +60,7 @@
           path: /opt/webapp  # Path to the directory containing Dockerfile
         name: sample-node-app
         tag: latest
+        source: build
         state: present  # Ensure the image is built
 
     - name: Run the Node.js app in a Docker container
