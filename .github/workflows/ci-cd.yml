@@ -71,7 +71,7 @@ jobs:
       # Wait for 10 seconds
       - name: Wait for 10 seconds to get server ready
         run: |
-          echo "Waiting for 5 seconds..."
+          echo "Waiting for 10 seconds..."
           sleep 10
 
 
