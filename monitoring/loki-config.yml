@@ -1,0 +1,9 @@
+server:
+  http_listen_port: 3100
+
+ingester:
+  chunk_target_size: 1048576
+
+loki:
+  auth_enabled: false
+

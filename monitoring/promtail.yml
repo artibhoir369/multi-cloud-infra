@@ -1,0 +1,19 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 9095
+
+positions:
+  filename: /tmp/positions.yaml  # Keeps track of the position of the logs
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push  # Loki's URL
+
+scrape_configs:
+  - job_name: system
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: varlogs
+          __path__: /var/log/*log  # Adjust the path if necessary
+

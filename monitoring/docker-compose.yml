@@ -1,0 +1,56 @@
+version: '3.7'
+
+services:
+  # Prometheus service
+  prometheus:
+    image: prom/prometheus:v2.38.0
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - monitoring
+
+  # Grafana service
+  grafana:
+    image: grafana/grafana:8.5.0
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "admin"  # Change this password in production
+    depends_on:
+      - prometheus
+    networks:
+      - monitoring
+
+  # Loki service
+  loki:
+    image: grafana/loki:2.7.0
+    container_name: loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/loki-config.yml
+    networks:
+      - monitoring
+
+  # Promtail service (added)
+  promtail:
+    image: grafana/promtail:2.7.0
+    container_name: promtail
+    restart: unless-stopped
+    volumes:
+      - ./promtail.yml:/etc/promtail/promtail.yml  # You need to create a promtail.yml configuration file
+      - /var/log:/var/log  # Mounting the logs directory from the host
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge
+
