@@ -27,7 +27,7 @@ jobs:
 
       - name: Set environment variables for Consul
         env:
-          CONSUL_HTTP_ADDR: "https://8077-45-115-184-224.ngrok-free.app"  # Replace with your public URL
+          CONSUL_HTTP_ADDR: "https://41d3-45-115-184-224.ngrok-free.app"  # Replace with your public URL
         run: |
           echo "Consul address set."
 

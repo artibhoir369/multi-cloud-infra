@@ -4,5 +4,5 @@ global:
 scrape_configs:
   - job_name: 'nodejs-app'
     static_configs:
-      - targets: ['3.142.55.46:3000']  # IP and port of your Node.js app (replace with the actual IP)
+      - targets: ['3.145.86.102:3000']  # IP and port of your Node.js app (replace with the actual IP)
 
