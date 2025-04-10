@@ -1,4 +1,3 @@
-```markdown
 # 🌐 Multi-Cloud DevOps Infrastructure with Terraform, Ansible & CI/CD
 
 This project demonstrates a complete DevOps setup that provisions and manages infrastructure across **AWS** and **IBM Cloud** using **Terraform**, configures instances with **Ansible**, deploys a Dockerized application via a **CI/CD pipeline (GitHub Actions)**, and provides centralized **monitoring/logging**.
@@ -11,7 +10,7 @@ This project demonstrates a complete DevOps setup that provisions and manages in
 - **Configuration Management**: Ansible
 - **CI/CD Pipeline**: GitHub Actions
 - **Cloud Providers**: AWS & IBM Cloud
-- **Monitoring & Logging**: Prometheus + Grafana + Loki
+- **Monitoring & Logging**: Prometheus + Grafana 
 - **Containerization**: Docker
 
 ---
@@ -19,8 +18,21 @@ This project demonstrates a complete DevOps setup that provisions and manages in
 ## 🚀 How to Set Up and Run the Infrastructure
 
 ### 🔧 Prerequisites
-- Terraform (v1.5+)
-- Ansible
+- Add your AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, EC2_SSH_PRIVATE_KEY  under github settings > secrets > actions
+- start consule and ngrok, (in case you are using s3 backend for terraform then this step not required) 
+```bash
+consul agent -dev
+ngrok http 8500
+```
+
+- Update following line in .github/workflows/ci-cd.yml AND infra/aws/backend.tf # Replace with your public URL
+```bash
+CONSUL_HTTP_ADDR: "https://41d3-45-115-184-224.ngrok-free.app"  # Replace with your public URL in .github/workflows/ci-cd.yml
+```
+- Update following line in infra/aws/backend.tf # Replace with your public URL
+```bash
+address = "https://41d3-45-115-184-224.ngrok-free.app"  # Correct HTTP API URL  in infra/aws/backend.tf
+```
 - AWS CLI & IBM Cloud CLI configured with credentials
 - Docker (for building the app)
 - SSH key pair for access
@@ -35,29 +47,8 @@ This project demonstrates a complete DevOps setup that provisions and manages in
 
 2. **Provision Infrastructure**
 
-   **AWS:**
-   ```bash
-   cd terraform/aws
-   terraform init
-   terraform apply -auto-approve
-   ```
-
-   **IBM Cloud:**
-   ```bash
-   cd ../ibm
-   terraform init
-   terraform apply -auto-approve
-   ```
-
-3. **Configure Instances**
-   ```bash
-   cd ../../ansible
-   ansible-playbook -i inventory playbook.yml
-   ```
-
-4. **Deploy Application (Optional: from GitHub Actions)**
    - Push to `main` branch
-   - GitHub Actions will build and deploy to both clouds
+   - GitHub Actions will create infra, build and deploy
 
 ---
 
@@ -67,26 +58,32 @@ This project demonstrates a complete DevOps setup that provisions and manages in
 
 - **Trigger**: On push to `main`
 - **Steps**:
-  1. Build Docker image
-  2. Push image to container registry
-  3. Run `terraform apply` for AWS and IBM in **parallel**
+  1. Run `terraform apply` for AWS 
+  2. Build Docker image
   4. Run Ansible to configure and deploy the app
 
 ### 🧱 Directory Structure
 ```
-terraform/
+.github/
+infra/
 ├── aws/
 ├── ibm/
-├── modules/
 ansible/
-ci-cd/
-app/
 monitoring/
 ```
 
 ---
+## Monitoring setup
+cd monitoring
+update public IP of ec2 in prometheus.yml
+update index.js to scrap logs, rebuild image and container on ec2
+docker build -t sample-node-app:latest /opt/webapp
+docker run -d --name node-webapp --restart always -p 3000:3000 sample-node-app:latest
 
-## 📊 Accessing Logs and Monitoring
+then
+docker-compose up -d (on your laptop # should have docker desktop running)
+
+## 📊 Accessing merics and Monitoring Dashboard
 
 ### 🌍 Grafana Dashboard
 - URL: `http://<monitoring-instance-ip>:3000`
@@ -96,8 +93,9 @@ monitoring/
   - Docker/container status
   - App health endpoints
 
-### 📚 Logs
-- Loki is integrated to pull logs from Docker containers.
+### 📚 metrics (Prometheus)
+- - URL: `http://<monitoring-instance-ip>:9090`
+- Prometheus is integrated to pull logs from Docker containers.
 - Access via Grafana → Explore tab → Log query
 
 ---
@@ -108,7 +106,6 @@ monitoring/
 - Terraform modules are used to ensure reusable infrastructure definitions.
 - Ansible roles abstract out server configuration logic.
 - Monitoring/logging is done via open-source tools to avoid vendor lock-in.
-- Parallel deployments reduce time and mimic real-world multi-cloud delivery.
 
 ---
 
